@@ -10,7 +10,7 @@ int ziel_farbkomponente_rot;
 int ziel_farbkomponente_gruen;
 int ziel_farbkomponente_blau;
 
-char dateiname[100];
+char* dateiname;
 
 int calculate_color(int start, int ziel, int x, int breite);
 
@@ -50,8 +50,10 @@ int main(int argc, char *argv[])
 	ziel_farbkomponente_rot = atoi(argv[6]);
 	ziel_farbkomponente_gruen = atoi(argv[7]);
 	ziel_farbkomponente_blau = atoi(argv[8]);
-	sprintf(dateiname, "%s", argv[6]);
+	dateiname = argv[9];
 
+
+	// Datei öffnen
 	FILE *bild = fopen(dateiname, "w");
 
 	if (bild == NULL)
@@ -60,12 +62,11 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	// After opening the file and before the return statement
 
-	// Write the PPM header
+	// Fuege die PPM-Header-Informationen hinzu 
 	fprintf(bild, "P3 %d %d 255 ", breite, hoehe);
 
-	// Write the pixel data
+	// Schreibe die Farbwerte in die Datei Zeile fuer Zeile
 	for (int y = 0; y < hoehe; y++)
 	{
 		for (int x = 0; x < breite; x++)
@@ -75,14 +76,20 @@ int main(int argc, char *argv[])
 			int blau = calculate_color(start_farbkomponente_blau, ziel_farbkomponente_blau, x, breite);
 			fprintf(bild, "%d %d %d ", rot, gruen, blau);
 		}
-		fprintf(bild, "\n"); // New line at the end of each row
+		fprintf(bild, "\n"); // Neue Zeile nach jeder Zeile
 	}
 
-	fclose(bild); // Don't forget to close the file
+	// Schließe die Datei mit fclose und prüfe auf Fehler
+	if(fclose(bild) != 0)
+	{
+		printf("Fehler: Datei konnte nicht geschlossen werden\n");
+		return 1;
+	}
 
 	return 0;
 }
 
+// Funktion, die die Farbwerte für den Gradienten berechnet
 int calculate_color(int start, int ziel, int x, int breite)
 {
 	return start + (ziel - start) * x / breite;

@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
 	studi@bsvm:~$ ./a5 b 10 12 120 200 50 beispiel b.ppm
 	*/
 
+	// Überprüfen ob die richtige Anzahl an Argumenten übergeben wurde
 	if (argc != 7)
 	{
 		printf("Falsche Anzahl an Argumenten\n");
@@ -38,30 +39,34 @@ int main(int argc, char *argv[])
 	farbkomponente_blau = atoi(argv[5]);
 	sprintf(dateiname, "%s", argv[6]);
 
+	// Datei öffnen	
 	FILE *bild = fopen(dateiname, "w");
 
+	// Überprüfen ob die Datei geöffnet werden konnte
 	if (bild == NULL)
 	{
 		printf("Fehler: Datei konnte nicht geöffnet werden\n");
 		return 1;
 	}
 
-	// After opening the file and before the return statement
-
-	// Write the PPM header
+	// Schreibe die Kopfzeile in die Datei
 	fprintf(bild, "P3 %d %d 255 ", breite, hoehe);
 
-	// Write the pixel data
+	// Fuege die Farbkomponenten in die Datei ein
 	for (int y = 0; y < hoehe; y++)
 	{
 		for (int x = 0; x < breite; x++)
 		{
 			fprintf(bild, "%d %d %d ", farbkomponente_rot, farbkomponente_gruen, farbkomponente_blau);
 		}
-		fprintf(bild, "\n"); // New line at the end of each row
+		fprintf(bild, "\n"); // Neue Zeile
 	}
 
-	fclose(bild); // Don't forget to close the file
+	// Schließen der Datei mit Fehlerbehandlung
+	if(fclose(bild) != 0){
+		printf("Fehler: Datei konnte nicht geschlossen werden\n");
+		return 1;
+	} 
 
 	printf("Breite: %d \nHoehe: %d \nFarbkomponente Rot: %d \nFarbkomponente Grün: %d \nFarbkomponente Blau: %d \nDateiname: %s\n", breite, hoehe, farbkomponente_rot, farbkomponente_gruen, farbkomponente_blau, dateiname);
 
